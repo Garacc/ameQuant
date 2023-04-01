@@ -1,0 +1,7 @@
+talib
+pandas
+datetime
+yfinance
+requests
+csv
+json
