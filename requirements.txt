@@ -5,3 +5,5 @@ yfinance
 requests
 csv
 json
+mplfinance
+matplotlib
