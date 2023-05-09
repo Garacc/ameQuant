@@ -7,3 +7,4 @@ csv
 json
 mplfinance
 matplotlib
+streamlit

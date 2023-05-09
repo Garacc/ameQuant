@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from mplfinance.original_flavor import candlestick_ohlc
 import matplotlib.dates as mdates
 import pandas as pd
+import streamlit as st
 
 class YfinanceTickerInfo:
     def __init__(self, ticker, data_frame):
@@ -115,6 +116,48 @@ class YfinanceTickerInfo:
         ax.set_ylabel('price')
         ax.xaxis_date()
         plt.show()
+    
+    def st_plot_data(self, indicators=['K'], period=None):
+        # 信息补全
+        if 'BOLL' in indicators:
+            boll_list = [col for col in self.__indicators.columns if ('BOLL' in col and 'upper' in col)]
+            if len(boll_list) == 0:
+                _, _ = self.get_BOLL(period=20, delta=2)
+
+        plt_data = self.__indicators.tail(period).copy() if period is not None else self.__indicators.copy()
+        plt_data['Date'] = pd.to_datetime(plt_data['Date']).map(mdates.date2num) # 画图需将时间轴转为mdates格式
+        plt_data.set_index('Date', inplace=True)
+        
+        if len(indicators) < 1:
+            print("绘制指标选择异常。")
+            return
+        
+        fig, ax = plt.subplots(figsize=(16, 9))
+        for ind in indicators:
+            if ind == 'K':
+                plt_k = plt_data[['Open', 'High', 'Low', 'Close']]
+                plt_k.reset_index(inplace=True)
+                candlestick_ohlc(ax, plt_k.values, width=0.75, colorup='red', colordown='green', alpha=0.75)
+            elif ind == 'MA': # MA判别，暂仅支持一次性全部画全
+                ma_list = [col for col in plt_data.columns if 'MA' in col]
+                for ma in ma_list:
+                    ax.plot(plt_data[ma], label=ma)
+            elif ind == 'BOLL': # 布林线判别，暂仅支持一次性全部画全
+                boll_list = [col for col in plt_data.columns if ('BOLL' in col and 'upper' in col)]
+                if len(boll_list) == 0:
+                    _, _ = self.get_BOLL(period=20, delta=2)
+                    boll_list = [col for col in plt_data.columns if ('BOLL' in col and 'upper' in col)]
+                for boll in boll_list:
+                    boll_up = boll
+                    boll_lo = boll[:-5] + 'lower'
+                    ax.fill_between(plt_data.index, plt_data[boll_up], plt_data[boll_lo], alpha=0.2)
+        
+        ax.set_title(self.ticker, fontsize=20)
+        ax.legend(loc='upper left')
+        ax.set_xlabel('date')
+        ax.set_ylabel('price')
+        ax.xaxis_date()
+        st.pyplot(fig)
 
 
 

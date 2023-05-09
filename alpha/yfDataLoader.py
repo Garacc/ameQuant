@@ -212,13 +212,9 @@ class YfinanceDataLoader:
 
 
 if __name__ == "__main__":
-    start_date = '2022-01-01'
-    end_date = '2022-01-15'
     proxy = '127.0.0.1:21882'
-    tickers = ['BIDU', 'TSLA', 'NVDA']
 
     yfd = YfinanceDataLoader(proxy=proxy)
-    yfd.set_tickers_list(tickers)
-    yfd.download_data(start_date=start_date, end_date=end_date)
-    data1 = yfd.get_data('TSLA')
-    data2 = yfd.report_data()
+    yfd.init_tickers_list()
+    yfd.reload_data()
+    yfd.download_data(is_dump=True)
