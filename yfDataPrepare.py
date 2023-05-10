@@ -141,7 +141,6 @@ class yfDataAtomic:
             self.ticker_data[upkey] = self.ticker_data[MA_KEY] + DELTA * self.ticker_data[STD_KEY]
             self.ticker_data[lokey] = self.ticker_data[MA_KEY] - DELTA * self.ticker_data[STD_KEY]
 
-
     def judge_strategy(self):
         # BOLL strategy judge
         sig_boll = strategy_boll(self.ticker_data)
@@ -158,3 +157,25 @@ class yfDataAtomic:
             self.ticker_selected = 'sold_signal'
         else:
             pass
+
+def ticker_info_to_json(ticker):
+    # check ticker dataType
+    if not isinstance(ticker, yfDataAtomic):
+        print("Inavailable ticker type!")
+        return None
+
+    ans_dict = {}
+
+    # 打印该公司的市盈率、市净率、行业、公司简介等信息
+    ans_dict["股票代码"] = ticker.ticker
+    ans_dict["公司名称"] = ticker.ticker_info.info['longName']
+    ans_dict["股票价格"] = ticker.ticker_info.info['regularMarketPrice']
+    ans_dict["市盈率 P/E Ratio"] = ticker.ticker_info.info['trailingPE']
+    ans_dict["市净率 P/B Ratio"] = ticker.ticker_info.info['priceToBook']
+    ans_dict["所属行业"] = ticker.ticker_info.info['industry']
+    ans_dict["公司市值"] = ticker.ticker_info.info['marketCap']
+    ans_dict["公司简介"] = ticker.ticker_info.info['longBusinessSummary']
+    ans_dict["财报货币单位"] = ticker.ticker_info.info['financialsCurrency']
+    ans_dict["公司网站"] = ticker.ticker_info.info['website']
+
+    return json.dumps(ans_dict)
