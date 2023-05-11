@@ -1,6 +1,7 @@
 # ameQuant
 
 ameQuant rookie code
+
 useful ticker selection func
 
 ### Quick Start
