@@ -54,7 +54,8 @@ class yfDataAtomic:
             self.ticker = self.ticker[:-1]
         
         # company info
-        self.ticker_info = yf.Ticker(self.ticker, proxy=self.proxy)
+        # yFinance接口异常，待数据库修复
+        # self.ticker_info = yf.Ticker(self.ticker, proxy=self.proxy)
     
     def download_data(self, is_dump=True):
         if self.ticker_data is None: # 原始数据集中不存在该文件
@@ -80,8 +81,9 @@ class yfDataAtomic:
             self.tickers_data = existed_ticker_data
         
         # company info
-        if self.ticker_info is None:
-            self.ticker_info = yf.Ticker(self.ticker, proxy=self.proxy)
+        # yFinance接口异常，待数据库修复
+        # if self.ticker_info is None:
+        #     self.ticker_info = yf.Ticker(self.ticker, proxy=self.proxy)
 
         if is_dump: # 数据是否要直接回写进文件
             if self.ticker == 'PRN': # extra check PRN is a reserved name in Windows
@@ -94,7 +96,7 @@ class yfDataAtomic:
     def atomicTickerDownload(self, ticker, start_date, end_date):
         tmptic_download = yf.download(ticker, start=start_date, end=end_date, threads=True, proxy=self.proxy)
         if tmptic_download.size == 0:
-            print("股票{} 数据读取失败".format(ticker))
+            # print("股票{} 数据读取失败".format(ticker))
             return None
         
         try:
@@ -161,21 +163,21 @@ class yfDataAtomic:
 def ticker_info_to_json(ticker):
     # check ticker dataType
     if not isinstance(ticker, yfDataAtomic):
-        print("Inavailable ticker type!")
+        print("Unavailable ticker type!")
         return None
 
     ans_dict = {}
 
     # 打印该公司的市盈率、市净率、行业、公司简介等信息
     ans_dict["股票代码"] = ticker.ticker
-    ans_dict["公司名称"] = ticker.ticker_info.info['longName']
-    ans_dict["股票价格"] = ticker.ticker_info.info['regularMarketPrice']
-    ans_dict["市盈率 P/E Ratio"] = ticker.ticker_info.info['trailingPE']
-    ans_dict["市净率 P/B Ratio"] = ticker.ticker_info.info['priceToBook']
-    ans_dict["所属行业"] = ticker.ticker_info.info['industry']
-    ans_dict["公司市值"] = ticker.ticker_info.info['marketCap']
-    ans_dict["公司简介"] = ticker.ticker_info.info['longBusinessSummary']
-    ans_dict["财报货币单位"] = ticker.ticker_info.info['financialsCurrency']
-    ans_dict["公司网站"] = ticker.ticker_info.info['website']
+    # ans_dict["公司名称"] = ticker.ticker_info.info['longName']
+    # ans_dict["股票价格"] = ticker.ticker_info.info['regularMarketPrice']
+    # ans_dict["市盈率 P/E Ratio"] = ticker.ticker_info.info['trailingPE']
+    # ans_dict["市净率 P/B Ratio"] = ticker.ticker_info.info['priceToBook']
+    # ans_dict["所属行业"] = ticker.ticker_info.info['industry']
+    # ans_dict["公司市值"] = ticker.ticker_info.info['marketCap']
+    # ans_dict["公司简介"] = ticker.ticker_info.info['longBusinessSummary']
+    # ans_dict["财报货币单位"] = ticker.ticker_info.info['financialsCurrency']
+    # ans_dict["公司网站"] = ticker.ticker_info.info['website']
 
     return json.dumps(ans_dict)
