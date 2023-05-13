@@ -85,7 +85,7 @@ class yfDataAtomic:
         # if self.ticker_info is None:
         #     self.ticker_info = yf.Ticker(self.ticker, proxy=self.proxy)
 
-        if is_dump: # 数据是否要直接回写进文件
+        if is_dump and self.ticker_data is not None: # 数据是否要直接回写进文件
             if self.ticker == 'PRN': # extra check PRN is a reserved name in Windows
                 self.ticker += '_'
             tic_path = self.data_path + self.ticker + ".csv"
